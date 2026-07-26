@@ -1,0 +1,83 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# BioEnzyme Designer v2.0 — Docker Compose
+# Deploy locally or on any Docker-compatible cloud (AWS ECS, GCP Cloud Run)
+# ═══════════════════════════════════════════════════════════════════════════
+
+version: "3.9"
+
+services:
+  # ── REST API Server ────────────────────────────────────────────────────
+  api:
+    build:
+      context: ..
+      dockerfile: cloud/Dockerfile
+      target: base
+    container_name: bioenzyme-api
+    ports:
+      - "8000:8000"
+    environment:
+      - BRENDA_API_KEY=${BRENDA_API_KEY:-}
+      - LOG_LEVEL=info
+      - MAX_JOB_DURATION=600
+    volumes:
+      - bioenzyme_data:/app/data
+      - bioenzyme_output:/app/output
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2.0"
+        reservations:
+          memory: 512M
+          cpus: "0.5"
+
+  # ── GUI (optional, requires display server) ────────────────────────────
+  gui:
+    build:
+      context: ..
+      dockerfile: cloud/Dockerfile
+      target: base
+    container_name: bioenzyme-gui
+    ports:
+      - "6080:6080"
+    environment:
+      - DISPLAY=:99
+    volumes:
+      - bioenzyme_data:/app/data
+    depends_on:
+      - api
+    entrypoint: [
+      "sh", "-c",
+      "apt-get update && apt-get install -y novnc websockify xvfb && "
+      "Xvfb :99 -screen 0 1280x800x24 & "
+      "websockify --web=/usr/share/novnc/ 6080 localhost:5900 & "
+      "python -m bioenzyme_v2.gui.tkinter_gui"
+    ]
+    profiles:
+      - with-gui
+
+  # ── Optional: Redis for job queue (production) ────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: bioenzyme-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    profiles:
+      - production
+
+volumes:
+  bioenzyme_data:
+  bioenzyme_output:
+  redis_data:
+
+networks:
+  default:
+    name: bioenzyme-net
