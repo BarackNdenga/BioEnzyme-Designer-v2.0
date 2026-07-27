@@ -1,0 +1,40 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# BioEnzyme Designer v2.0 — Python Dependencies
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Structure handling ────────────────────────────────────────────────────
+biopython>=1.83           # PDB parsing, DSSP, sequence utilities
+
+# ── Machine learning ──────────────────────────────────────────────────────
+scikit-learn>=1.4.0       # RandomForestRegressor, StandardScaler, cross_val_score
+numpy>=1.26.0             # Numerical arrays, statistics
+pandas>=2.2.0             # Per-residue DataFrame manipulation
+
+# ── Visualisation ─────────────────────────────────────────────────────────
+matplotlib>=3.8.0         # PNG bar charts (Agg backend, no display needed)
+plotly>=5.20.0            # Interactive 3D scatter HTML
+py3Dmol>=2.1.0            # Molecular 3D viewer embedded in HTML
+
+# ── Networking ────────────────────────────────────────────────────────────
+requests>=2.31.0          # AlphaFold / RCSB / BRENDA / SABIO-RK fetching
+
+# ── REST API (optional) ──────────────────────────────────────────────────
+fastapi>=0.110.0          # REST API framework
+uvicorn>=0.29.0           # ASGI server for FastAPI
+python-multipart>=0.0.9   # File upload support
+
+# ── GUI (optional) ────────────────────────────────────────────────────────
+# tkinter is bundled with Python on most systems
+# For PyQt5 alternative:
+# PyQt5>=5.15.0           # Alternative GUI framework
+
+# ── Cloud deployment (optional) ──────────────────────────────────────────
+# Installed automatically in Docker:
+# These are only needed if deploying directly:
+# boto3>=1.34.0           # AWS SDK (for ECS deploy scripts)
+# google-cloud-run>=2.0.0 # GCP Cloud Run SDK
+
+# ── DSSP (optional) ──────────────────────────────────────────────────────
+# Requires compiled binary:
+#   conda install -c salilab dssp
+#   apt-get install dssp (Debian/Ubuntu)
