@@ -1,0 +1,10 @@
+# BioEnzyme Designer v2.0 — CLI-only dependencies
+# For lightweight Docker images without API/GUI
+
+biopython>=1.83
+scikit-learn>=1.4.0
+numpy>=1.26.0
+pandas>=2.2.0
+matplotlib>=3.8.0
+plotly>=5.20.0
+requests>=2.31.0
